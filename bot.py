@@ -10,16 +10,17 @@ ANTHROPIC_API_KEY  = os.environ["ANTHROPIC_API_KEY"]
 
 # Darmowe API – nie wymaga klucza
 FRANKFURTER_URL = "https://api.frankfurter.app/latest"
-METALS_URL      = "https://api.metals.live/v1/spot/silver"   # bezpłatne, bez klucza
 
 # ── Pobieranie danych ─────────────────────────────────────────────────────────
 def get_silver_usd() -> float:
-    """Cena srebra w USD za uncję trojańską."""
-    r = requests.get(METALS_URL, timeout=10)
+    """Cena srebra w USD za uncję trojańską (Yahoo Finance)."""
+    url = "https://query1.finance.yahoo.com/v8/finance/chart/SI%3DF"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    r = requests.get(url, headers=headers, timeout=10)
     r.raise_for_status()
     data = r.json()
-    # Odpowiedź: [{"silver": 30.12}]
-    return float(data[0]["silver"])
+    price = data["chart"]["result"][0]["meta"]["regularMarketPrice"]
+    return float(price)
 
 
 def get_fx_rates() -> dict:
