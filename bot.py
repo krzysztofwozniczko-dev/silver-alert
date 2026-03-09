@@ -56,4 +56,27 @@ def send_telegram(text: str) -> None:
     print("✅ Wiadomość wysłana na Telegram.")
 
 def main():
-    today = datetime.now().strftime("%d.%m.%Y
+    today = datetime.now().strftime("%d.%m.%Y")
+    print("📡 Pobieram dane...")
+    silver_usd_val = get_silver_usd()
+    fx             = get_fx_rates()
+    eur_pln_val    = fx["EUR_PLN"]
+    usd_pln_val    = fx["USD_PLN"]
+    silver_pln_val = silver_pln(silver_usd_val, usd_pln_val)
+
+    print("🤖 Generuję komentarz AI...")
+    comment = get_ai_comment(silver_usd_val, eur_pln_val, usd_pln_val)
+
+    message = (
+        f"📊 <b>Raport dzienny – {today}</b>\n\n"
+        f"🥈 <b>Srebro:</b>  {silver_usd_val:.2f} USD/oz  |  {silver_pln_val:.2f} PLN/g\n"
+        f"💶 <b>EUR/PLN:</b> {eur_pln_val}\n"
+        f"💵 <b>USD/PLN:</b> {usd_pln_val}\n\n"
+        f"💬 <i>{comment}</i>"
+    )
+
+    print(message)
+    send_telegram(message)
+
+if __name__ == "__main__":
+    main()
