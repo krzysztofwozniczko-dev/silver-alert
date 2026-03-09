@@ -1,29 +1,30 @@
-name: 📊 Daily Silver & FX Alert
+name: Daily Silver & FX Alert
 
 on:
   schedule:
-    # Każdego dnia o 10:00 UTC = 11:00 czasu polskiego (lato) / 9:00 (zima)
-    - cron: "0 7 * * 1-5"   # tylko dni robocze (pon-pt)
-    # Jeśli chcesz 7 dni w tygodniu, zmień na: "0 7 * * *"
-  workflow_dispatch:         # możliwość ręcznego uruchomienia z panelu GitHub
+    - cron: "0 7 * * 1-5"
+  workflow_dispatch:
 
 jobs:
   send-alert:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ⬇️ Pobierz kod
+      - name: Pobierz kod
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
 
-      - name: 🐍 Ustaw Python 3.11
+      - name: Ustaw Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: 📦 Zainstaluj zależności
+      - name: Zainstaluj zaleznosci
         run: pip install -r requirements.txt
 
-      - name: 🚀 Wyślij raport
+      - name: Wyslij raport
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
